@@ -22,9 +22,9 @@
 
 ### 데이터
 
-- [ ] **DATA-01**: 학교서버(aiforalab.com) DB에 대화 기록 비동기 POST 저장
-- [ ] **DATA-02**: TTS 캐시 시스템 (IndexedDB, 사용자 질문 기반 키)
-- [ ] **DATA-03**: 사전 생성 캐시 배치 스크립트 (38개 상품 기본 답변 mp3)
+- [x] **DATA-01**: 학교서버(aiforalab.com) DB에 대화 기록 비동기 POST 저장
+- [x] **DATA-02**: TTS 캐시 시스템 (파일 기반, MD5 키)
+- [x] **DATA-03**: 사전 생성 캐시 배치 스크립트 (38개 상품 기본 답변 mp3)
 
 ### 프론트엔드
 
@@ -63,9 +63,9 @@
 | STS-04 | Phase 2 | Complete |
 | STS-05 | Phase 2 | Complete |
 | STS-06 | Phase 2 | Complete |
-| DATA-01 | Phase 2 | Pending |
-| DATA-02 | Phase 2 | Pending |
-| DATA-03 | Phase 2 | Pending |
+| DATA-01 | Phase 2 | Complete |
+| DATA-02 | Phase 2 | Complete |
+| DATA-03 | Phase 2 | Complete |
 | FE-01 | Phase 3 | Pending |
 | FE-02 | Phase 2 | Complete |
 | FE-03 | Phase 3 | Pending |

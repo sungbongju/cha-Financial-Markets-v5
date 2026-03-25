@@ -13,7 +13,7 @@ Middleton 서버에 Node.js API 서버를 구축하고, 검증된 v3 코드를 E
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: 서버 환경** - Middleton에 Node.js/PM2 설치 및 서버 실행 기반 구축 (completed 2026-03-25)
-- [ ] **Phase 2: API 서버** - v3 코드를 Express로 포팅하여 STS 파이프라인 완성
+- [x] **Phase 2: API 서버** - v3 코드를 Express로 포팅하여 STS 파이프라인 완성 (completed 2026-03-25)
 - [ ] **Phase 3: 프론트엔드 연동** - Vercel 프론트엔드 배포 및 Middleton 연결
 
 ## Phase Details
@@ -45,8 +45,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — sts-stream, humelo-tts, humelo-tts-stream 포팅 및 CORS 설정 (Wave 1)
-- [ ] 02-02-PLAN.md — DB 비동기 저장, TTS 파일 캐시, 배치 스크립트 (Wave 2)
+- [x] 02-01-PLAN.md — sts-stream, humelo-tts, humelo-tts-stream 포팅 및 CORS 설정 (Wave 1)
+- [x] 02-02-PLAN.md — DB 비동기 저장, TTS 파일 캐시, 배치 스크립트 (Wave 2)
 
 ### Phase 3: 프론트엔드 연동
 **Goal**: Vercel 프론트엔드가 Middleton API를 바라보며 STS 음성 대화가 엔드-투-엔드로 동작한다
@@ -69,5 +69,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. 서버 환경 | 1/1 | Complete   | 2026-03-25 |
-| 2. API 서버 | 0/2 | Not started | - |
+| 2. API 서버 | 2/2 | Complete   | 2026-03-25 |
 | 3. 프론트엔드 연동 | 0/1 | Not started | - |
