@@ -4,7 +4,8 @@
   "description": "Finbot Middleton API Server",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "generate-cache": "node scripts/generate-cache.js"
   },
   "keywords": [],
   "author": "",
