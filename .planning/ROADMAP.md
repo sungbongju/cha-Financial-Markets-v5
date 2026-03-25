@@ -12,7 +12,7 @@ Middleton 서버에 Node.js API 서버를 구축하고, 검증된 v3 코드를 E
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: 서버 환경** - Middleton에 Node.js/PM2 설치 및 서버 실행 기반 구축
+- [x] **Phase 1: 서버 환경** - Middleton에 Node.js/PM2 설치 및 서버 실행 기반 구축 (completed 2026-03-25)
 - [ ] **Phase 2: API 서버** - v3 코드를 Express로 포팅하여 STS 파이프라인 완성
 - [ ] **Phase 3: 프론트엔드 연동** - Vercel 프론트엔드 배포 및 Middleton 연결
 
@@ -68,6 +68,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 서버 환경 | 0/1 | Not started | - |
+| 1. 서버 환경 | 1/1 | Complete   | 2026-03-25 |
 | 2. API 서버 | 0/2 | Not started | - |
 | 3. 프론트엔드 연동 | 0/1 | Not started | - |

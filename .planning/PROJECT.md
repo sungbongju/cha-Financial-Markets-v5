@@ -70,5 +70,17 @@
 | Express.js 서버 | v3 Vercel serverless와 호환, 코드 변환 최소화 | — Pending |
 | Humelo 스트리밍 우선 + Standard 폴백 | 0.3초 vs 2초 레이턴시 차이 | — Pending |
 
+## Current Milestone: v1.0 Middleton STS 통합
+
+**Goal:** Middleton 서버에서 STS 파이프라인(엑사원+Humelo)을 직접 처리하여 음성 응답 레이턴시를 최소화
+
+**Target features:**
+- Middleton Express API 서버 (PM2)
+- SSE 스트리밍 파이프라이닝 (LLM→TTS 문장 단위)
+- Humelo DIVE Streaming TTS (0.3초 내 재생)
+- 학교서버 DB 비동기 저장
+- Vercel 프론트엔드 연동
+- TTS 캐시 시스템
+
 ---
-*Last updated: 2026-03-25 after initialization*
+*Last updated: 2026-03-25 after milestone v1.0 start*
