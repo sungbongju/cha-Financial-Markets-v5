@@ -42,11 +42,11 @@ Plans:
   3. Humelo 스트리밍 실패 시 Standard TTS로 자동 폴백되어 응답이 끊기지 않는다
   4. `<thought>` 태그와 ETF/CMA 발음 후처리가 적용된 텍스트가 TTS로 전달된다
   5. 사용자 인터럽트 요청 시 진행 중인 TTS 스트림이 즉시 중단된다
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: sts-stream, humelo-tts, openai-chat 포팅 및 CORS 설정
-- [ ] 02-02: DB 비동기 저장 및 TTS 캐시 시스템 (IndexedDB + 배치 스크립트)
+- [ ] 02-01-PLAN.md — sts-stream, humelo-tts, humelo-tts-stream 포팅 및 CORS 설정 (Wave 1)
+- [ ] 02-02-PLAN.md — DB 비동기 저장, TTS 파일 캐시, 배치 스크립트 (Wave 2)
 
 ### Phase 3: 프론트엔드 연동
 **Goal**: Vercel 프론트엔드가 Middleton API를 바라보며 STS 음성 대화가 엔드-투-엔드로 동작한다
