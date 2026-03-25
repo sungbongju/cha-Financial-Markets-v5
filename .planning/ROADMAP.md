@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: 서버 환경** - Middleton에 Node.js/PM2 설치 및 서버 실행 기반 구축 (completed 2026-03-25)
 - [x] **Phase 2: API 서버** - v3 코드를 Express로 포팅하여 STS 파이프라인 완성 (completed 2026-03-25)
-- [ ] **Phase 3: 프론트엔드 연동** - Vercel 프론트엔드 배포 및 Middleton 연결
+- [x] **Phase 3: 프론트엔드 연동** - Vercel 프론트엔드 배포 및 Middleton 연결 (completed 2026-03-25)
 
 ## Phase Details
 
@@ -71,4 +71,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. 서버 환경 | 1/1 | Complete   | 2026-03-25 |
 | 2. API 서버 | 2/2 | Complete   | 2026-03-25 |
-| 3. 프론트엔드 연동 | 1/2 | In Progress|  |
+| 3. 프론트엔드 연동 | 2/2 | Complete   | 2026-03-25 |
