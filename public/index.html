@@ -2181,7 +2181,7 @@ async function stsProcessInput(text) {
               if (cleanSentence.length > 2) {
                 if (!window._stsTtsPending) window._stsTtsPending = 0;
                 window._stsTtsPending++;
-                const streamUrl = MIDDLETON_API + '/api/humelo-tts-stream?text=' + encodeURIComponent(cleanSentence) + '&voiceName=시아&speed=1.05';
+                const streamUrl = MIDDLETON_API + '/api/humelo-tts-stream?text=' + encodeURIComponent(cleanSentence) + '&voiceName=' + encodeURIComponent('시아') + '&speed=1.05';
                 // 스트리밍 오디오 → AudioQueue에 URL로 추가 (브라우저가 청크 도착 즉시 재생)
                 window._stsAudioQueue.add(streamUrl);
                 window._stsTtsPending--;

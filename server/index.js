@@ -4,7 +4,11 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 9000;
 
-app.use(express.json());
+// JSON body 파싱 (POST만, GET은 무시)
+app.use((req, res, next) => {
+  if (req.method === 'GET') return next();
+  express.json()(req, res, next);
+});
 
 // CORS — 명시적 허용 도메인 (FE-02)
 const ALLOWED_ORIGINS = [

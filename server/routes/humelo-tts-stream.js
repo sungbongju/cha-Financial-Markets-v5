@@ -17,13 +17,16 @@ function getCacheKey(text) {
   return crypto.createHash('md5').update(text.trim().toLowerCase()).digest('hex');
 }
 
-router.post('/humelo-tts-stream', async (req, res) => {
+// GET + POST 둘 다 지원 (Audio 태그는 GET으로 요청)
+const handleTtsStream = async (req, res) => {
   const HUMELO_API_KEY = process.env.HUMELO_API_KEY;
   if (!HUMELO_API_KEY) {
     return res.status(503).json({ error: 'HUMELO_API_KEY not configured' });
   }
 
-  const { text, voiceName = '시아', speed = 1.05, emotion = 'neutral' } = req.body || {};
+  // GET: query params, POST: body
+  const params = req.method === 'GET' ? req.query : (req.body || {});
+  const { text, voiceName = '시아', speed = 1.05, emotion = 'neutral' } = params;
   if (!text) return res.status(400).json({ error: 'text required' });
 
   const cacheKey = getCacheKey(text);
@@ -108,6 +111,9 @@ router.post('/humelo-tts-stream', async (req, res) => {
       res.end();
     }
   }
-});
+};
+
+router.get('/humelo-tts-stream', handleTtsStream);
+router.post('/humelo-tts-stream', handleTtsStream);
 
 module.exports = router;
