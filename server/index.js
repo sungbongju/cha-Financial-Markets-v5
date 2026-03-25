@@ -33,6 +33,7 @@ app.use((req, res, next) => {
 app.use('/api', require('./routes/sts-stream'));
 app.use('/api', require('./routes/humelo-tts-stream'));
 app.use('/api', require('./routes/humelo-tts'));
+app.use('/api', require('./routes/db-save'));
 
 app.get('/health', (req, res) => {
   res.json({
