@@ -191,7 +191,7 @@ router.post('/sts-stream', async (req, res) => {
   let clientDisconnected = false;
   const abortController = new AbortController();
 
-  req.on('close', () => {
+  res.on('close', () => {
     clientDisconnected = true;
     abortController.abort();
   });
