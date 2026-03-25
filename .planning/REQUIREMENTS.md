@@ -13,12 +13,12 @@
 
 ### STS 파이프라인
 
-- [ ] **STS-01**: SSE 스트리밍으로 엑사원 localhost(127.0.0.1:19000) 호출 + 한국어 문장 단위 감지
-- [ ] **STS-02**: Humelo DIVE Streaming TTS 직접 호출 (prosody-api, 0.3초 내 첫 청크 전달)
-- [ ] **STS-03**: Humelo Standard TTS 폴백 (스트리밍 실패 시 supabase 엔드포인트)
-- [ ] **STS-04**: 엑사원 Deep thought 태그 필터링 (<thought>...</thought> 제거)
-- [ ] **STS-05**: 한국어 TTS 발음 후처리 (ETF→이티에프, CMA→씨엠에이 등)
-- [ ] **STS-06**: 인터럽트 (사용자 발화 시 현재 TTS 중단)
+- [x] **STS-01**: SSE 스트리밍으로 엑사원 localhost(127.0.0.1:19000) 호출 + 한국어 문장 단위 감지
+- [x] **STS-02**: Humelo DIVE Streaming TTS 직접 호출 (prosody-api, 0.3초 내 첫 청크 전달)
+- [x] **STS-03**: Humelo Standard TTS 폴백 (스트리밍 실패 시 supabase 엔드포인트)
+- [x] **STS-04**: 엑사원 Deep thought 태그 필터링 (<thought>...</thought> 제거)
+- [x] **STS-05**: 한국어 TTS 발음 후처리 (ETF→이티에프, CMA→씨엠에이 등)
+- [x] **STS-06**: 인터럽트 (사용자 발화 시 현재 TTS 중단)
 
 ### 데이터
 
@@ -29,7 +29,7 @@
 ### 프론트엔드
 
 - [ ] **FE-01**: Vercel 프론트엔드 배포 (STS API URL을 Middleton nginx 프록시로)
-- [ ] **FE-02**: CORS 설정 (cha-financial-markets-v5.vercel.app 허용)
+- [x] **FE-02**: CORS 설정 (cha-financial-markets-v5.vercel.app 허용)
 - [ ] **FE-03**: STS 모드 UI (채팅 버블 + 음성 상태 표시)
 
 ## v2 Requirements
@@ -57,17 +57,17 @@
 | ENV-01 | Phase 1 | Complete |
 | ENV-02 | Phase 1 | Complete |
 | ENV-03 | Phase 1 | Complete |
-| STS-01 | Phase 2 | Pending |
-| STS-02 | Phase 2 | Pending |
-| STS-03 | Phase 2 | Pending |
-| STS-04 | Phase 2 | Pending |
-| STS-05 | Phase 2 | Pending |
-| STS-06 | Phase 2 | Pending |
+| STS-01 | Phase 2 | Complete |
+| STS-02 | Phase 2 | Complete |
+| STS-03 | Phase 2 | Complete |
+| STS-04 | Phase 2 | Complete |
+| STS-05 | Phase 2 | Complete |
+| STS-06 | Phase 2 | Complete |
 | DATA-01 | Phase 2 | Pending |
 | DATA-02 | Phase 2 | Pending |
 | DATA-03 | Phase 2 | Pending |
 | FE-01 | Phase 3 | Pending |
-| FE-02 | Phase 2 | Pending |
+| FE-02 | Phase 2 | Complete |
 | FE-03 | Phase 3 | Pending |
 
 **Coverage:**

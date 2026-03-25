@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 01-server-env-01-01-PLAN.md
-last_updated: "2026-03-25T05:04:36.873Z"
+stopped_at: Completed 02-api-server-02-01-PLAN.md
+last_updated: "2026-03-25T05:21:45.833Z"
 last_activity: 2026-03-25 — Phase 1 Plan 1 완료 (nvm/Node.js/PM2/nginx 요청서)
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
+  total_plans: 3
+  completed_plans: 2
   percent: 100
 ---
 
@@ -47,6 +47,7 @@ Progress: [██████████] 100%
 
 *Updated after each plan completion*
 | Phase 01-server-env P01 | 20 | 3 tasks | 3 files |
+| Phase 02-api-server P01 | 4 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,9 @@ Recent decisions affecting current work:
 - [Phase 01-server-env]: npx pm2 사용 — sudo 없이 전역 설치 불가, npx로 대체
 - [Phase 01-server-env]: crontab @reboot으로 pm2 resurrect — pm2 startup은 sudo 필요
 - [Phase 01-server-env]: proxy_read_timeout 120s — 엑사원 LLM 응답 대기용
+- [Phase 02-api-server]: EXAONE_BASE_URL 기본값=127.0.0.1:19000 (localhost 직접 호출, 네트워크 홉 0)
+- [Phase 02-api-server]: AbortController.abort() + clientDisconnected 동시 실행으로 인터럽트 강화 (STS-06)
+- [Phase 02-api-server]: CORS 와일드카드 * 제거, ALLOWED_ORIGINS 명시적 배열로 교체 (FE-02)
 
 ### Pending Todos
 
@@ -78,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T05:01:57.963Z
-Stopped at: Completed 01-server-env-01-01-PLAN.md
+Last session: 2026-03-25T05:21:45.829Z
+Stopped at: Completed 02-api-server-02-01-PLAN.md
 Resume file: None
