@@ -28,9 +28,9 @@
 
 ### 프론트엔드
 
-- [ ] **FE-01**: Vercel 프론트엔드 배포 (STS API URL을 Middleton nginx 프록시로)
+- [x] **FE-01**: Vercel 프론트엔드 배포 (STS API URL을 Middleton nginx 프록시로)
 - [x] **FE-02**: CORS 설정 (cha-financial-markets-v5.vercel.app 허용)
-- [ ] **FE-03**: STS 모드 UI (채팅 버블 + 음성 상태 표시)
+- [x] **FE-03**: STS 모드 UI (채팅 버블 + 음성 상태 표시)
 
 ## v2 Requirements
 
@@ -66,9 +66,9 @@
 | DATA-01 | Phase 2 | Complete |
 | DATA-02 | Phase 2 | Complete |
 | DATA-03 | Phase 2 | Complete |
-| FE-01 | Phase 3 | Pending |
+| FE-01 | Phase 3 | Complete |
 | FE-02 | Phase 2 | Complete |
-| FE-03 | Phase 3 | Pending |
+| FE-03 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 15 total

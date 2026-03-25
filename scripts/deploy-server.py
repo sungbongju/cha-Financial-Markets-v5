@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Middleton 서버에 finbot server/ 코드를 배포하는 스크립트.
 paramiko SSH + SFTP 사용 (Windows 환경, sshpass 불가)
@@ -6,6 +7,11 @@ paramiko SSH + SFTP 사용 (Windows 환경, sshpass 불가)
 import paramiko
 import os
 import sys
+
+# Windows CP949 인코딩 문제 방지
+if sys.stdout.encoding and sys.stdout.encoding.lower() in ('cp949', 'euc-kr'):
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 SSH_HOST = '1.223.219.123'
 SSH_PORT = 7822
@@ -76,7 +82,7 @@ def main():
     out, _ = run_cmd(ssh, f'test -f {REMOTE_BASE}/.env && echo EXISTS || echo MISSING')
     if 'MISSING' in out:
         print('[deploy] WARNING: .env file missing on server!')
-        print(f'[deploy]   HUMELO_API_KEY 없이 서버 시작됨 — Humelo TTS 라우트는 동작하지 않습니다.')
+        print('[deploy]   HUMELO_API_KEY 없이 서버 시작됨 - Humelo TTS 라우트는 동작하지 않습니다.')
         print(f'[deploy]   Create it: echo "HUMELO_API_KEY=<your-key>" > {REMOTE_BASE}/.env')
         print(f'[deploy]   Then restart: cd ~/finbot && source ~/.nvm/nvm.sh && npx pm2 restart finbot-server')
     else:

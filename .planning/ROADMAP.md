@@ -71,4 +71,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. 서버 환경 | 1/1 | Complete   | 2026-03-25 |
 | 2. API 서버 | 2/2 | Complete   | 2026-03-25 |
-| 3. 프론트엔드 연동 | 0/2 | Not started | - |
+| 3. 프론트엔드 연동 | 1/2 | In Progress|  |
