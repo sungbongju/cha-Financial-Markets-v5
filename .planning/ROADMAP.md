@@ -56,10 +56,11 @@ Plans:
   1. `cha-financial-markets-v5.vercel.app`에서 STS 모드를 시작하면 Middleton API에 요청이 도달한다
   2. 음성 질문 후 첫 번째 TTS 재생까지 체감 레이턴시가 v3(Vercel 경유)보다 줄어든다
   3. 채팅 버블에 응답 텍스트가 표시되고 음성 상태(듣는 중/생각 중/말하는 중)가 시각적으로 구분된다
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Vercel 프론트엔드 배포 (STS URL Middleton 변경 + UI 완성)
+- [ ] 03-01-PLAN.md — v3 프론트엔드 복사 + Middleton API URL 교체 + Vercel 배포 (Wave 1)
+- [ ] 03-02-PLAN.md — paramiko로 server/ 코드 Middleton 배포 + PM2 재시작 (Wave 1)
 
 ## Progress
 
@@ -70,4 +71,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. 서버 환경 | 1/1 | Complete   | 2026-03-25 |
 | 2. API 서버 | 2/2 | Complete   | 2026-03-25 |
-| 3. 프론트엔드 연동 | 0/1 | Not started | - |
+| 3. 프론트엔드 연동 | 0/2 | Not started | - |
