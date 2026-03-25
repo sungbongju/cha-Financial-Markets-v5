@@ -1,0 +1,4 @@
+.planning/
+server/.env
+server/tts-cache/
+server/node_modules/

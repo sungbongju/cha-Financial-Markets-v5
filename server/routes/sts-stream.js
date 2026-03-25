@@ -170,9 +170,9 @@ function sendSSE(res, event, data) {
 
 // ── POST /api/sts-stream ──
 router.post('/sts-stream', async (req, res) => {
-  const EXAONE_API_KEY = process.env.EXAONE_API_KEY || 'router-key';
-  const EXAONE_BASE_URL = process.env.EXAONE_BASE_URL || 'http://127.0.0.1:19000/v1';
-  const EXAONE_MODEL = process.env.EXAONE_MODEL || 'exaone-deep-32b';
+  const EXAONE_API_KEY = process.env.EXAONE_API_KEY || '';
+  const EXAONE_BASE_URL = process.env.EXAONE_BASE_URL || '';
+  const EXAONE_MODEL = process.env.EXAONE_MODEL || '';
   const HUMELO_API_KEY = process.env.HUMELO_API_KEY;
 
   const { message, history = [] } = req.body || {};

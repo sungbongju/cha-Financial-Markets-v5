@@ -13,10 +13,10 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() in ('cp949', 'euc-kr'):
     import io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
-SSH_HOST = '1.223.219.123'
-SSH_PORT = 7822
-SSH_USER = 'student04'
-SSH_PASS = 'chacha2025'
+SSH_HOST = os.environ.get('SSH_HOST', '')
+SSH_PORT = int(os.environ.get('SSH_PORT', '7822'))
+SSH_USER = os.environ.get('SSH_USER', '')
+SSH_PASS = os.environ.get('SSH_PASS', '')
 REMOTE_BASE = '/home/student04/finbot/server'
 
 # 전송할 파일 목록 (로컬 server/ 기준 상대경로)
