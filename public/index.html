@@ -419,8 +419,8 @@ body {
   word-break: break-word;
 }
 .sts-transcript .sts-msg.user {
-  background: var(--gold);
-  color: #fff;
+  background: #e0e0e0;
+  color: #333;
   align-self: flex-end;
   border-bottom-right-radius: 4px;
 }
@@ -2064,9 +2064,8 @@ function cleanTagRemnants(text) {
   if (!text) return '';
   return text
     .replace(/<\/?thought[^>]*>/gi, '')   // <thought>, </thought>
-    .replace(/<\/[a-z]*>?/gi, '')          // </anything> 또는 </
-    .replace(/<[a-z][^>]*>/gi, '')         // <anything>
-    .replace(/^[\s.,:;]+/, '')             // 앞쪽 공백/구두점 정리
+    .replace(/<\/thought\s*>/gi, '')       // </thought> 변형
+    .replace(/^<\/\s*>/g, '')             // 고아 </> 만 제거
     .trim();
 }
 
