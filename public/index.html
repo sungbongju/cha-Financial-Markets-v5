@@ -2137,6 +2137,10 @@ async function stsProcessInput(text) {
     const streamingBubble = document.querySelector('.sts-msg.assistant.streaming');
     if (streamingBubble) streamingBubble.classList.remove('streaming');
     console.log('[STS] interrupt');
+    document.getElementById('stsStatus').textContent = '듣고 있어요...';
+    updateSTSVisual('listening');
+    stsStartRecognition();
+    return; // ★ 인터럽트만 하고, 키워드를 새 질문으로 보내지 않음
   }
 
   stsProcessing = true;
