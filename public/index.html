@@ -2064,8 +2064,10 @@ function cleanTagRemnants(text) {
   if (!text) return '';
   return text
     .replace(/<\/?thought[^>]*>/gi, '')   // <thought>, </thought>
-    .replace(/<\/thought\s*>/gi, '')       // </thought> 변형
-    .replace(/^<\/\s*>/g, '')             // 고아 </> 만 제거
+    .replace(/<\/\s*thought\s*>/gi, '')   // </thought> 변형
+    .replace(/<\/\s*생각\s*>/gi, '')      // </생각> (한국어)
+    .replace(/^<\/?\s*>/g, '')            // 고아 </> 또는 <>
+    .replace(/^<\/\s*/g, '')              // 고아 </ 로 시작하는 경우
     .trim();
 }
 

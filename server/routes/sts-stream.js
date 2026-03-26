@@ -255,8 +255,8 @@ router.post('/sts-stream', async (req, res) => {
 
     function processSentence(sentence) {
       if (!sentence || sentence.length === 0) return;
-      const ttsText = applyTtsPostProcessing(sentence);
-      sendSSE(res, 'text', { sentence: ttsText, index: sentenceIndex });
+      // Humelo DIVE는 자체 발음처리 → 후처리 불필요, 원본 텍스트 전송
+      sendSSE(res, 'text', { sentence, index: sentenceIndex });
       sentenceIndex++;
     }
 
