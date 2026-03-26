@@ -1909,31 +1909,58 @@ let stsSpeaking = false;
 let stsRecognizing = false;
 let stsProcessing = false;
 
-// ── AudioQueue: 문장별 오디오 순차 재생 ──
+// ── AudioQueue: 문장별 오디오 순차 재생 (preload로 갭 최소화) ──
 class AudioQueue {
-  constructor() { this.queue = []; this.playing = false; this.currentAudio = null; this.onAllDone = null; }
+  constructor() {
+    this.queue = [];
+    this.playing = false;
+    this.currentAudio = null;
+    this.nextAudio = null;  // 다음 오디오 미리 로드
+    this.onAllDone = null;
+  }
   add(audioUrl) {
     if (!audioUrl) return;
     this.queue.push(audioUrl);
+    // 다음 오디오 미리 로드
+    if (this.playing && !this.nextAudio && this.queue.length === 1) {
+      this._preloadNext();
+    }
     if (!this.playing) this._playNext();
+  }
+  _preloadNext() {
+    if (this.queue.length === 0) { this.nextAudio = null; return; }
+    const url = this.queue[0];
+    this.nextAudio = new Audio();
+    this.nextAudio.preload = 'auto';
+    this.nextAudio.src = url;
   }
   _playNext() {
     if (this.queue.length === 0) {
       this.playing = false;
+      this.nextAudio = null;
       if (this.onAllDone) this.onAllDone();
       return;
     }
     this.playing = true;
     const url = this.queue.shift();
-    if (!this.currentAudio) this.currentAudio = new Audio();
-    this.currentAudio.src = url;
+    // 미리 로드한 오디오가 있으면 사용, 없으면 새로 생성
+    if (this.nextAudio && this.nextAudio.src.includes(encodeURIComponent(url.split('text=')[1]?.split('&')[0] || ''))) {
+      this.currentAudio = this.nextAudio;
+      this.nextAudio = null;
+    } else {
+      if (!this.currentAudio) this.currentAudio = new Audio();
+      this.currentAudio.src = url;
+    }
     this.currentAudio.onended = () => this._playNext();
     this.currentAudio.onerror = () => this._playNext();
     this.currentAudio.play().catch(() => this._playNext());
+    // 다음 오디오 미리 로드
+    this._preloadNext();
   }
   interrupt() {
     this.queue = [];
     if (this.currentAudio) { this.currentAudio.pause(); this.currentAudio.currentTime = 0; }
+    if (this.nextAudio) { this.nextAudio = null; }
     this.playing = false;
   }
   get isPlaying() { return this.playing; }
