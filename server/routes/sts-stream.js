@@ -246,12 +246,12 @@ router.post('/sts-stream', async (req, res) => {
     const reader = exaResponse.body.getReader();
     const decoder = new TextDecoder();
 
-    let rawBuffer = '';
     let contentBuffer = '';
     let fullReply = '';
     let sentenceIndex = 0;
     let sseBuffer = '';
-    let processedLen = 0;
+    let inThought = false;
+    let thoughtBuffer = '';
 
     function processSentence(sentence) {
       if (!sentence || sentence.length === 0) return;
@@ -286,18 +286,30 @@ router.post('/sts-stream', async (req, res) => {
         const token = parsed.choices?.[0]?.delta?.content;
         if (!token) continue;
 
-        rawBuffer += token;
+        // thought 태그 state machine (STS-04)
+        if (!inThought && (thoughtBuffer + token).includes('<thought>')) {
+          inThought = true;
+          thoughtBuffer += token;
+          continue;
+        }
+        if (inThought) {
+          thoughtBuffer += token;
+          if (thoughtBuffer.includes('</thought>')) {
+            // thought 끝 → </thought> 이후 텍스트만 추출
+            const afterThought = thoughtBuffer.split('</thought>').pop().trim();
+            inThought = false;
+            thoughtBuffer = '';
+            if (afterThought) {
+              contentBuffer += afterThought;
+              fullReply += afterThought;
+            }
+          }
+          continue;
+        }
 
-        // thought 태그 안전 제거 (STS-04)
-        const cleaned = stripThoughtTags(rawBuffer);
-        const trimmedCleaned = cleaned.replace(/^\s+/, '');
-
-        const newText = trimmedCleaned.substring(processedLen);
-        if (!newText) continue;
-
-        contentBuffer += newText;
-        fullReply += newText;
-        processedLen = trimmedCleaned.length;
+        // thought 아닌 일반 토큰
+        contentBuffer += token;
+        fullReply += token;
 
         // 문장 경계 감지 → 즉시 전송 (STS-01)
         let boundary;
