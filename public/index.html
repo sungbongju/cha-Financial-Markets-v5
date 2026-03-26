@@ -2458,6 +2458,24 @@ function updateSTSVisual(state) {
   if (state) v.classList.add(state);
 }
 
+// ── ESC키 인터럽트: 발화 중 ESC 누르면 즉시 중단 ──
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && (stsSpeaking || stsProcessing)) {
+    console.log('[STS] ESC 인터럽트!');
+    if (window._stsAbortController) { window._stsAbortController.abort(); window._stsAbortController = null; }
+    window._stsAudioQueue.interrupt();
+    if (window._stsAudio) { window._stsAudio.pause(); window._stsAudio.currentTime = 0; }
+    speechSynthesis.cancel();
+    stsSpeaking = false;
+    stsProcessing = false;
+    const streamingBubble = document.querySelector('.sts-msg.assistant.streaming');
+    if (streamingBubble) streamingBubble.classList.remove('streaming');
+    document.getElementById('stsStatus').textContent = '듣고 있어요...';
+    updateSTSVisual('listening');
+    stsStartRecognition();
+  }
+});
+
 function stopSTS() {
   stsActive = false;
   // 스트림 취소
