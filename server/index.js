@@ -38,6 +38,8 @@ app.use('/api', require('./routes/sts-stream'));
 app.use('/api', require('./routes/humelo-tts-stream'));
 app.use('/api', require('./routes/humelo-tts'));
 app.use('/api', require('./routes/db-save'));
+app.use('/api/liveavatar-token', require('./routes/liveavatar-token'));
+app.use('/api/liveavatar-session', require('./routes/liveavatar-session'));
 
 app.get('/health', (req, res) => {
   res.json({

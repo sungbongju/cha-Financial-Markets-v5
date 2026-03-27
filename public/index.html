@@ -1591,7 +1591,7 @@ let stsActive = false;
 // FTF state (교수님 패턴 — 직접 API + LiveKit)
 let ftfSessionInfo = null;
 let ftfRoom = null;
-let ftfSessionToken = null;
+let ftfKeepAliveInterval = null;
 let ftfRecognition = null;
 let ftfIsListening = false;
 let ftfIsProcessing = false;
@@ -2505,21 +2505,24 @@ function stopSTS() {
 }
 
 // ═══════════════════════════════════════════
-// FTF MODE — 교수님 cha-ai-graduate 코드 그대로 (직접 API + LiveKit)
+// FTF MODE — LiveAvatar LITE (Rika + DataChannel speak_text)
 // ═══════════════════════════════════════════
 const AVATAR_CONFIG = {
-  avatarId: 'e2eb35c947644f09820aa3a4f9c15488',
-  voiceId: '15d128072e194dc399d2898967941897'
+  avatarId: '5dd4d830-957a-419f-9334-0dc4399ada5d',  // Rika Sitting (공개 아바타)
+  voiceId: 'b2bd6569-a537-4342-aeca-a1f15d2a2c97'    // Rika - IA
 };
 
-async function ftfCallProxy(endpoint, payload) {
-  const res = await fetch('/api/heygen-proxy', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ endpoint, token: ftfSessionToken, payload })
-  });
-  if (!res.ok) throw new Error(`Proxy ${res.status}`);
-  return res.json();
+// LiveAvatar DataChannel 커맨드 전송
+function ftfSendCommand(eventType, data) {
+  if (!ftfRoom) return;
+  try {
+    const cmd = data ? { event_type: eventType, ...data } : { event_type: eventType };
+    const encoded = new TextEncoder().encode(JSON.stringify(cmd));
+    ftfRoom.localParticipant.publishData(encoded, { reliable: true, topic: 'agent-control' });
+    console.log('[FTF] Command:', eventType, data || '');
+  } catch (e) {
+    console.error('[FTF] Command error:', eventType, e);
+  }
 }
 
 function setFTFState(state) {
@@ -2598,15 +2601,14 @@ let ftfSpeakTimer = null;
 async function ftfInterrupt() {
   if (!ftfIsSpeaking || !ftfSessionInfo) return;
   try {
-    await ftfCallProxy('/v1/streaming.interrupt', {
-      session_id: ftfSessionInfo.session_id
-    });
+    ftfSendCommand('avatar.interrupt');
   } catch (e) {
     console.error('FTF interrupt error:', e);
   }
   clearTimeout(ftfSpeakTimer);
   ftfIsSpeaking = false;
   ftfIsProcessing = false;
+  hideSubtitle('ftfSubtitle');
 }
 
 function ftfStartListening() {
@@ -2643,7 +2645,7 @@ async function ftfProcessInput(text) {
   setFTFState('thinking');
 
   try {
-    const res = await fetch('/api/openai-chat', {
+    const res = await fetch(MIDDLETON_API + '/api/openai-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text, history: chatHistory.slice(-10) })
@@ -2654,6 +2656,8 @@ async function ftfProcessInput(text) {
     chatHistory.push({ role: 'assistant', content: data.reply || '' });
     saveChat('user', text, 'ftf');
     saveChat('assistant', data.reply || '', 'ftf');
+    addModeChatBubble('ftfChatMessages', 'user', text);
+    addModeChatBubble('ftfChatMessages', 'bot', data.reply || '');
 
     if (data.action === 'navigate' && data.categoryId) {
       selectCategory(data.categoryId);
@@ -2662,18 +2666,15 @@ async function ftfProcessInput(text) {
       }
     }
 
-    // 아바타가 답변 (교수님 코드: callProxy → streaming.task)
+    // 아바타가 답변 (LiveAvatar LITE: DataChannel speak_text)
     ftfIsSpeaking = true;
     setFTFState('speaking');
+    showSubtitle('ftfSubtitle', data.reply || '');
 
     const ttsText = data.ttsReply || data.reply || '';
-    await ftfCallProxy('/v1/streaming.task', {
-      session_id: ftfSessionInfo.session_id,
-      text: ttsText,
-      task_type: 'repeat'
-    });
+    ftfSendCommand('avatar.speak_text', { text: ttsText });
 
-    // 폴백 타이머 (DataReceived avatar_stop_talking이 먼저 오면 취소됨)
+    // 폴백 타이머 (avatar.speak_ended 이벤트가 먼저 오면 취소됨)
     const speakDuration = Math.max(4000, (ttsText.length / 5) * 1000 + 2000);
 
     // interrupt 대비: 500ms 후 마이크 열기
@@ -2682,9 +2683,11 @@ async function ftfProcessInput(text) {
     }
 
     ftfSpeakTimer = setTimeout(() => {
-      if (!ftfIsSpeaking) return;  // 이미 이벤트로 처리됨
+      if (!ftfIsSpeaking) return;
+      console.log('[FTF] 폴백 타이머로 speaking 종료');
       ftfIsSpeaking = false;
       ftfIsProcessing = false;
+      hideSubtitle('ftfSubtitle');
       if (ftfAutoListen && ftfSessionInfo) {
         ftfStartListening();
         setFTFState('listening');
@@ -2722,28 +2725,34 @@ async function startFTF() {
   statusLabel.textContent = '아바타 세션을 시작하는 중...';
 
   try {
-    // 1. 토큰 발급
-    const tokenRes = await fetch('/api/heygen-token', { method: 'POST' });
-    const tokenData = await tokenRes.json();
-    ftfSessionToken = tokenData.token || tokenData.data?.token;
-    if (!ftfSessionToken) throw new Error('HeyGen token 발급 실패');
-
-    // 2. 세션 생성 (교수님 코드: callProxy → streaming.new)
-    const createRes = await ftfCallProxy('/v1/streaming.new', {
-      avatar_id: AVATAR_CONFIG.avatarId,
-      quality: 'medium',
-      voice: { voice_id: AVATAR_CONFIG.voiceId, rate: 1.0, emotion: 'friendly' },
-      language: 'ko',
-      version: 'v2',
-      video_encoding: 'H264'
+    // 1. LiveAvatar 세션 생성 (토큰 + 시작 통합)
+    const tokenRes = await fetch(MIDDLETON_API + '/api/liveavatar-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ avatar_id: AVATAR_CONFIG.avatarId, voice_id: AVATAR_CONFIG.voiceId })
     });
+    const tokenData = await tokenRes.json();
+    if (!tokenRes.ok || !tokenData.session_id) {
+      throw new Error('LiveAvatar 세션 생성 실패: ' + (tokenData.error || JSON.stringify(tokenData)));
+    }
 
-    if (!createRes.data) throw new Error('세션 생성 실패');
-    ftfSessionInfo = createRes.data;
+    ftfSessionInfo = {
+      session_id: tokenData.session_id,
+      livekit_url: tokenData.livekit_url,
+      livekit_client_token: tokenData.livekit_client_token
+    };
 
-    // 3. LiveKit 연결 (교수님 코드 그대로)
+    // 2. LiveKit 연결
     const lk = window.LivekitClient;
-    ftfRoom = new lk.Room({ adaptiveStream: true, dynacast: true });
+    ftfRoom = new lk.Room({
+      adaptiveStream: true,
+      dynacast: true,
+      audioCaptureDefaults: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    });
 
     ftfRoom.on(lk.RoomEvent.TrackSubscribed, (track) => {
       if (track.kind === 'video' || track.kind === 'audio') {
@@ -2760,54 +2769,64 @@ async function startFTF() {
       }
     });
 
-    // ★ DataReceived: 아바타 상태 이벤트 감지 (HeyGen SDK 내부 로직과 동일)
+    // ★ DataReceived: LiveAvatar 이벤트 (event_type 기반)
     ftfRoom.on(lk.RoomEvent.DataReceived, (payload) => {
       try {
         const msg = JSON.parse(new TextDecoder().decode(payload));
-        if (msg.type === 'avatar_start_talking') {
+        const evt = msg.event_type || msg.type;
+
+        if (evt === 'avatar.speak_started') {
           ftfIsSpeaking = true;
           setFTFState('speaking');
-        } else if (msg.type === 'avatar_stop_talking') {
+          console.log('[FTF] avatar.speak_started');
+        } else if (evt === 'avatar.speak_ended') {
           clearTimeout(ftfSpeakTimer);
           ftfIsSpeaking = false;
           ftfIsProcessing = false;
+          hideSubtitle('ftfSubtitle');
+          console.log('[FTF] avatar.speak_ended');
           if (ftfAutoListen && ftfSessionInfo) {
             setFTFState('listening');
             ftfStartListening();
           } else {
             setFTFState('idle');
           }
+        } else if (evt === 'session.stopped') {
+          console.log('[FTF] 서버에서 세션 종료');
+          stopFTF();
         }
       } catch(e) {}
     });
 
-    await ftfRoom.connect(ftfSessionInfo.url, ftfSessionInfo.access_token);
+    await ftfRoom.connect(ftfSessionInfo.livekit_url, ftfSessionInfo.livekit_client_token);
 
-    // 4. 스트리밍 시작
-    await ftfCallProxy('/v1/streaming.start', {
-      session_id: ftfSessionInfo.session_id
-    });
+    // 3. Keep-alive (4분마다)
+    ftfKeepAliveInterval = setInterval(() => {
+      if (ftfSessionInfo) {
+        fetch(MIDDLETON_API + '/api/liveavatar-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'keep-alive', session_id: ftfSessionInfo.session_id })
+        }).catch(e => console.warn('[FTF] keep-alive error:', e));
+      }
+    }, 240000);
 
-    // 5. UI 업데이트
+    // 4. UI 업데이트
     chatHistory = [];
     btn.textContent = '아바타 종료';
     btn.disabled = false;
     btn.classList.add('stop');
     statusDot.classList.add('online');
 
-    // 6. 인사 메시지 (교수님 코드 패턴)
+    // 5. 인사 메시지 (DataChannel speak_text)
     const greetingDisplay = '안녕하세요! 금융상품에 대해 궁금한 점을 편하게 물어보세요.';
     const greetingTTS = '안녕하세요! 금융 상품에 대해 궁금한 점을 편하게 물어보세요.';
     ftfIsSpeaking = true;
     setFTFState('speaking');
 
-    await ftfCallProxy('/v1/streaming.task', {
-      session_id: ftfSessionInfo.session_id,
-      text: greetingTTS,
-      task_type: 'repeat'
-    });
+    ftfSendCommand('avatar.speak_text', { text: greetingTTS });
 
-    // 인사 끝난 후 자동 듣기 시작 (교수님 코드: speakDuration 계산)
+    // 인사 끝난 후 자동 듣기 시작
     const greetDuration = Math.max(3000, (greetingTTS.length / 5) * 1000 + 1500);
     setTimeout(() => {
       ftfIsSpeaking = false;
@@ -2833,10 +2852,14 @@ async function stopFTF() {
   ftfAutoListen = false;
   ftfStopListening();
 
+  clearInterval(ftfKeepAliveInterval);
+
   if (ftfSessionInfo) {
     try {
-      await ftfCallProxy('/v1/streaming.stop', {
-        session_id: ftfSessionInfo.session_id
+      await fetch(MIDDLETON_API + '/api/liveavatar-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'stop', session_id: ftfSessionInfo.session_id })
       });
     } catch (e) {}
   }
@@ -2852,7 +2875,6 @@ async function stopFTF() {
   document.getElementById('ftfPlaceholder').style.display = 'flex';
 
   ftfSessionInfo = null;
-  ftfSessionToken = null;
   ftfRecognition = null;
   ftfIsProcessing = false;
   ftfIsSpeaking = false;
