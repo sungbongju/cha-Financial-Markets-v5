@@ -27,6 +27,7 @@ FILES = [
     'routes/humelo-tts-stream.js',
     'routes/humelo-tts.js',
     'routes/openai-chat.js',
+    'routes/biz-chat.js',
     'routes/db-save.js',
     'routes/liveavatar-token.js',
     'routes/liveavatar-session.js',

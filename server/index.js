@@ -13,6 +13,8 @@ app.use((req, res, next) => {
 // CORS — 명시적 허용 도메인 (FE-02)
 const ALLOWED_ORIGINS = [
   'https://cha-financial-markets-v5.vercel.app',
+  'https://cha-biz-page.vercel.app',
+  'https://cha-biz-ai-v8.vercel.app',
   'https://sungbongju.github.io',
   'https://aiforalab.com',
   'http://localhost:3000',
@@ -38,6 +40,7 @@ app.use('/api', require('./routes/sts-stream'));
 app.use('/api', require('./routes/humelo-tts-stream'));
 app.use('/api', require('./routes/humelo-tts'));
 app.use('/api', require('./routes/openai-chat'));
+app.use('/api', require('./routes/biz-chat'));
 app.use('/api', require('./routes/db-save'));
 app.use('/api/liveavatar-token', require('./routes/liveavatar-token'));
 app.use('/api/liveavatar-session', require('./routes/liveavatar-session'));
