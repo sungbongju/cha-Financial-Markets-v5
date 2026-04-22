@@ -98,7 +98,12 @@ ${categoryList}
 4. 카테고리 전체에 대한 질문이면 action: "navigate", categoryId만 포함, productName 생략 (예: "채무증권이 뭐야?" → categoryId: "debt")
 5. 인사/잡담이면 action: "none"
 6. 투자 권유 금지, 객관적 정보만 제공
-7. ttsReply: 영어 약어를 한글 발음으로 변환 (ETF→이티에프, ELS→이엘에스, CMA→씨엠에이 등)`;
+7. ttsReply: 영어 약어를 한글 발음으로 변환 (ETF→이티에프, ELS→이엘에스, CMA→씨엠에이 등)
+
+## 출력 포맷 (중요)
+- 순수 JSON 객체 하나만 출력하세요.
+- \`\`\`json 같은 마크다운 코드 블록으로 감싸지 마세요.
+- JSON 앞뒤에 어떤 설명 텍스트도 붙이지 마세요.`;
 }
 
 // STS 프롬프트 (음성 대화용 — 지식 동일, 답변만 간결하게)
@@ -166,7 +171,12 @@ ${categoryList}
 4. 카테고리 질문 → action: "navigate", categoryId만
 5. 인사/잡담 → action: "none"
 6. 투자 권유 금지, 객관적 정보만 제공
-7. ttsReply: 영어 약어를 한글 발음으로 변환 (ETF→이티에프, ELS→이엘에스, CMA→씨엠에이 등)`;
+7. ttsReply: 영어 약어를 한글 발음으로 변환 (ETF→이티에프, ELS→이엘에스, CMA→씨엠에이 등)
+
+## 출력 포맷 (중요)
+- 순수 JSON 객체 하나만 출력하세요.
+- \`\`\`json 같은 마크다운 코드 블록으로 감싸지 마세요.
+- JSON 앞뒤에 어떤 설명 텍스트도 붙이지 마세요.`;
 }
 
 // 상품 상세 조회용 프롬프트
@@ -292,7 +302,8 @@ router.post('/openai-chat', async (req, res) => {
     const isSTS = mode === 'sts';
     const systemPrompt = isSTS ? buildSTSPrompt() : buildSystemPrompt();
     const historySlice = isSTS ? history.slice(-4) : history.slice(-10);
-    const maxTokens = isSTS ? 250 : 500;
+    // Gemma4는 엑사원보다 장황하게 응답 → 토큰 여유 확보
+    const maxTokens = isSTS ? 400 : 1500;
 
     const messages = [
       { role: 'system', content: systemPrompt },
@@ -325,14 +336,25 @@ router.post('/openai-chat', async (req, res) => {
 
     content = content.replace(/<thought>[\s\S]*?<\/thought>/g, '').trim();
     content = content.replace(/<\/?thought>/g, '').trim();
-    const jsonMatch = content.match(/```json\s*([\s\S]*?)```/) || content.match(/(\{[\s\S]*\})/);
+    // 닫는 ``` 있으면 우선, 없으면 ```json 이후 전체 캡처 (Gemma4가 토큰 한계로 잘릴 때 대응)
+    const jsonMatch = content.match(/```json\s*([\s\S]*?)```/)
+                   || content.match(/```json\s*([\s\S]*)/)
+                   || content.match(/(\{[\s\S]*\})/);
     if (jsonMatch) content = jsonMatch[1].trim();
+    // 끝에 남은 ``` 제거 (잘린 응답 대비)
+    content = content.replace(/```\s*$/, '').trim();
 
     let parsed;
     try {
       parsed = JSON.parse(content);
     } catch {
-      parsed = { reply: content, action: 'none' };
+      // JSON 파싱 실패 시: "reply" 필드만이라도 추출 시도 (응답 중간 잘림 대비)
+      const replyMatch = content.match(/"reply"\s*:\s*"([^"]+)/);
+      if (replyMatch) {
+        parsed = { reply: replyMatch[1], action: 'none' };
+      } else {
+        parsed = { reply: content, action: 'none' };
+      }
     }
 
     if (parsed.action !== 'navigate') {
