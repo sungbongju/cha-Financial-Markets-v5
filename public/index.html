@@ -1721,7 +1721,7 @@ async function selectProduct(productName) {
   if (!PRODUCT_DETAILS[productName]) {
     renderContent(); // 먼저 로딩 UI 표시
     try {
-      const res = await fetch('/api/openai-chat', {
+      const res = await fetch(MIDDLETON_API + '/api/openai-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productDetail: productName })
@@ -1859,7 +1859,7 @@ async function sendChat() {
   saveChat('user', msg, 'ttt');
 
   try {
-    const res = await fetch('/api/openai-chat', {
+    const res = await fetch(MIDDLETON_API + '/api/openai-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: msg, history: chatHistory.slice(-10) })
@@ -2298,7 +2298,7 @@ async function stsProcessInput(text) {
 
     // ── 폴백: 기존 블로킹 방식 ──
     try {
-      const res = await fetch('/api/openai-chat', {
+      const res = await fetch(MIDDLETON_API + '/api/openai-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text, history: chatHistory.slice(-4), mode: 'sts' })
