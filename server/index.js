@@ -15,6 +15,9 @@ const ALLOWED_ORIGINS = [
   'https://cha-financial-markets-v5.vercel.app',
   'https://cha-biz-page.vercel.app',
   'https://cha-biz-ai-v8.vercel.app',
+  'https://mediacom-avatar-bot.vercel.app',
+  'https://media-com-avatar-bot.vercel.app',
+  'https://mediacom-avatar-bot.netlify.app',
   'https://sungbongju.github.io',
   'https://aiforalab.com',
   'http://localhost:3000',
@@ -41,6 +44,7 @@ app.use('/api', require('./routes/humelo-tts-stream'));
 app.use('/api', require('./routes/humelo-tts'));
 app.use('/api', require('./routes/openai-chat'));
 app.use('/api', require('./routes/biz-chat'));
+app.use('/api', require('./routes/mediacom-chat'));
 app.use('/api', require('./routes/db-save'));
 app.use('/api/liveavatar-token', require('./routes/liveavatar-token'));
 app.use('/api/liveavatar-session', require('./routes/liveavatar-session'));
